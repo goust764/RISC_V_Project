@@ -1,10 +1,10 @@
-# Miniprojet_RISC_V
-**SEI 2A projet semestre 8**
+# RISC_V_PROJECT
+**SEI 2A project semester 8 with personnal improvements**
 ![Archi](doc/archi.svg)
-Ce projet de 4e année d'école d'ingénieur consistait à réaliser un processeur *RISC-V* 32 bits en System Verilog. Le processeur devait être capable d'exécuter le jeu d'instruction *RV32I* sans extentions. Le processeur est aussi accompagné d'un compilateur permettant de passer d'un code assembleur *RV32I* à un code machine.
+This 4th year engineering school project involved building a 32-bit *RISC-V* processor in System Verilog. The processor had to be capable of executing the *RV32I* instruction set without extensions. The processor is also accompanied by a compiler that can be used to convert *RV32I* assembly code into machine code.
 
 ## Architecture
-Le processeur adopte une architecture *Harvard*. Il comporte un pipeline 5 étages (Fetch, Decode, Execute, Memory, WriteBack). Il est capable d'exécuter l'ensemble du jeu d'instruction *RV32I* sans extentions à l'exception des instructions suivantes :
+The processor adopts *Harvard*. It features a 5-stage pipeline (Fetch, Decode, Execute, Memory, WriteBack). It is capable of executing the entire *RV32I* instruction set without extensions, with the exception of the following instructions:
 - `csrrw`
 - `csrrs`
 - `csrrc`
@@ -16,81 +16,80 @@ Le processeur adopte une architecture *Harvard*. Il comporte un pipeline 5 étag
 - `fence`
 - `fence.i`
 
-## Description des dossier
-- **asic** : Contient les éléments permettant de faire la synthèse du processeur
-- **bench** : Contient les bancs de test du processeur. L'avancement des tests se trouve dans le fichier [TODO.md](bench/TODO.md)
-- **compilateur** : Contient le sous projet du compilateur décrit dans la partie [Compilateur RV32I](#compilateur-rv32i)
-- **config** : Contient les fichiers de configuration pour ModelSim les outils de synthèse
-- **doc** : Contient l'ensemble de la documentation du projet
-- **prog** : Contient les programmes de test du processeur. Le descriptif de chaque programme se trouve dans le fichier [description_tests.md](prog/description_tests.md)
-- **rtl** : Contient le code source du processeur
-- **winconfig** : Contient les fichiers de configuration pour ModelSim sous Windows
+## Folder description
+- **asic** : Contains the elements needed to summarise the processor
+- **bench** : Contains the processor test benches. Test progress can be found in the  [TODO.md](bench/TODO.md) file
+- **compilateur** : Contains the compiler sub-project described in the  [Compilateur RV32I](#compilateur-rv32i) section
+- **config** : Contains configuration files for ModelSim synthesis tools
+- **doc** : Contains all the project documentation
+- **prog** : Contains the processor test programs. The description of each program can be found in the [description_tests.md](prog/description_tests.md) file
+- **rtl** : Contains the processor source code
+- **winconfig** : Contains the configuration files for ModelSim under Windows
 
-## Utilisation
-Pour simuler le processeur sous Windows avec ModelSim et avec le bench principal il suffit d'exécuter le script [`rtl/wincompile_System_Verilog.bat.bat`](rtl/wincompile_System_Verilog.bat) qui va lancer ModelSim et exécuter le testbench `bench/bench_riscv.sv`. Il est possible de changer le testbench à exécuter en modifiant le fichier de script comme suit :
-- A la ligne **6** définir le chemin vers le dossier contenant le projet
+## Usage
+To simulate the processor under Windows with ModelSim and with the main bench, simply run the [`rtl/wincompile_System_Verilog.bat.bat`](rtl/wincompile_System_Verilog.bat) script, which will launch ModelSim and run the testbench `bench/bench_riscv.sv`. You can change the testbench to be run by modifying the script file as follows:
+- On line **6** define the path to the folder containing the project
     ```batch
     set PROJECT_PATH=Chemin/vers/le/dossier/contenant/le/projet
     ```
-- A la ligne **14** définir les fichier RTL à compiler
+- On line **14**, define the RTL files to be compiled
     ```batch
     set RTL_FILE[0]=fichier1.sv
     set RTL_FILE[1]=fichier2.sv
     ...
     ```
-    > **Note :** Il est possible de compiler tous les fichiers RTL en même temps comme suit
+    > **Note:** It is possible to compile all RTL files at the same time as follows
     > ```batch
     > set RTL_FILE[0]=*.sv
     > ```
-- A la ligne **17** définir le testbench à compiler
+- On line **17** define the testbench to be compiled
     ```batch
     set BENCH_FILE[0]=fichier1.sv
     set BENCH_FILE[1]=fichier2.sv
     ...
     ```
-    > **Note :** De même, il est possible de compiler tous les fichiers RTL en même temps comme suit
+    > **Note:** It is also possible to compile all RTL files at the same time as follows
     > ```batch
     > set BENCH_FILE[0]=*.sv
     > ```
-- **Important** : Il est nécessaire modifier le nombre de fichier à compiler aux lignes **59** et **60**
+- **Important:** The number of files to be compiled must be changed on lines **59** and **60**
     ```batch
     for /l %%i in (0,1,NB_FICHIER) do call :display "!RTL_FILE[%%i]!"  %RTL_PATH%
     for /l %%i in (0,1,NB_FICHIER) do call :display "!BENCH_FILE[%%i]!" %BENCH_PATH%
     ```
-- A la ligne **66** définir le testbench à exécuter et le script de début de bench à exécuter
+- On line **66** define the testbench to be run and the bench start script to be run
     ```batch
     vsim -voptargs=+acc -do "do {%PROJECT_PATH%/%BENCH_PATH%/SCRIPT DE DEBUT DE BENCH}" LIB_Miniproj_RISCV.BENCH_A_EXECUTER
     ```
-    > **Note :** Mettre le nom du module du testbench à exécuter à la place de `BENCH_A_EXECUTER` et non pas le nom du fichier
+    > **Note:** Put the name of the testbench module to be executed in place of `BENCH_A_EXECUTER` and not the name of the file
 
-## Avancement
-La plupart des instructions sont fonctionnelles. Il reste cependant un certains nombre de problèmes empêchant l'exécution du programme de test principal. Ce dernier valide :
-- [x]  L'écriture dans les registres
-- [x]  La lecture des registres
-- [x]  L'écriture dans la mémoire
-- [x]  La plupart des opération arithmétiques (immédiates ou depuis les registres)
+## Advancement
+Most of the instructions are functional. However, there are still a number of problems preventing the main test program from running. This validates :
+- [x]  Writing in registers
+- [x]  Reading the registers
+- [x]  Writing in memory
+- [x]  Arithmetic operations
 
-Il semble qu'au stade actuel du projet la lecture dans la mémoire ne fonctionne pas correctement. Cela empêche donc l'exécution correcte du reste des tests.
-
-Cependant l'ensembles des autres tests réalisés sont fonctionnels.
-
-## Compilateur RV32I
-Afin de pouvoir réaliser nos testbench, nous avons eu besoin de réaliser un compilateur permettant de passer d'un code assembleur *RV32I* à un code machine. Pour cela nous avons réulitliser le compilateur réaliser lors du projet d'informatique du semestre 7.
+## RV32I Compiler
+In order to carry out our testbench, we needed to create a compiler that would allow us to convert *RV32I* assembly code into machine code. To do this, we reused the compiler we created during the computer science project in semester 7.
 
 ### Usage
-Pour compiler un fichier assembleur, il suffit de suivre la syntaxe suivante :
+To compile an assembler file, simply use the following syntax:
 ```
-rv32icomp.exe source_file regexps_file binfile [-v]
+rv32icomp.exe source_file regexps_file binfile [-v] [-c] [-s mem_size]
 ```
 | Syntax | Description |
 |---------------|--------------------|
-| `source_file` | Code source à lire |
-| `regexps_file` | Fichier contenant la syntaxe souhaitée (il est recommandé d'utiliser le fichier `database.txt`) |
-| `binfile` | Nom du fichier binaire à générer |
-| `-v` | Affiche la progression du parsing |
+| `source_file` | Source code to read |
+| `regexps_file` | File containing the desired syntax (we recommend using the  `database.txt` file) |
+| `binfile` | Name of the binary file to be generated |
+| `-v` | Displays parsing progress |
+| `-c` | Displays compiled code |
+| `-s` | Simulates compiled code and displays tests |
+| `mem_size` | Size of memory to be simulated |
 
 ### Fonctionnalités
-Le compilateur est capable de compiler tous le jeu d'instruction *RV32I* sans extentions à l'exception des instructions suivantes :
+The compiler is able to compile the entire *RV32I* instruction set without extensions, with the exception of the following instructions:
 - `csrrw`
 - `csrrs`
 - `csrrc`
@@ -102,21 +101,18 @@ Le compilateur est capable de compiler tous le jeu d'instruction *RV32I* sans ex
 - `fence`
 - `fence.i`
 
-Le compilateur est capable de compiler les instructions suivantes n'étant pas pris en charge par le processeur cible :
-- `j` remplacé par `jal r6,offset`
-- `li` remplacé par `addi rd,zero,imm`
-- `mv` remplacé par `add rd,rs1,zero`
-- `ble` (pas encore supporté)
+The compiler is able to compile the following instructions which are not supported by the target processor :
+- `j` replaced by `jal r6,offset`
+- `li` replaced by `addi rd,zero,imm`
+- `mv` replaced by `add rd,rs1,zero`
+- `ble` replaced by `add` and `blt`
 
-Le compilateur ajoute aussi automatiquement deux instructions `NOP` après chaque instruction de branchement.
+The compiler also automatically adds two `NOP` instructions after each branch instruction.
 
-Enfin il fait reboucler automatiquement le programme sur lui même à la fin du code source.
+Finally, it automatically loops the programme back on itself at the end of the source code.
 
-### Compilation
-Il est possible de compiler un exécutable sous Windows via **MinGW** en exécutant `wincompile.bat` ou sous Linux via *WSL* en exécutant `compile.bat`.
-Les deux scripts génèrent un exécutable nommé `rv32icomp.exe` dans le dossier `bin`, et l'exécute avec des du code de test sous valgrind pour `compile.bat`.
+### Compiling
+It is possible to compile an executable under Windows via **MinGW** by running `wincompile.bat` or under Linux via *WSL* by running `compile.bat`.
+Both scripts generate an executable named `rv32icomp.exe` in the `bin` directory, and run it with test code under valgrind for `compile.bat`.
 
-Sous linux il est possible de compiler le compilateur en utilisant la commande `make`, **cependant le makefile n'a pas été testé depuis la mise à jour du projet**.
-
-### Limitations
-Le compilateur n'a pas été entièrement testé, il est possible qu'il ne fonctionne pas correctement sur certains fichiers. 
+Under linux it is possible to compile the compiler using the `make` command, **although the makefile has not been tested since the project was updated**.

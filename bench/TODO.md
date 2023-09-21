@@ -1,6 +1,6 @@
 # Benchs et modifications à effectuer
 ## bench_riscv.sv
-- [ ]  Tester toutes les instructions
+- [X]  Tester toutes les instructions
 - [x]  Ajout du support pour une triple dépendance
     - Exemple avec une triple dépendance sur `sp`
     ```asm
